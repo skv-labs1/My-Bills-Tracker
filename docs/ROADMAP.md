@@ -1,25 +1,35 @@
 # Roadmap
 
-## Stage 1 — Personal MVP (current)
-- React + Vite dashboard with mock data
-- Google Sheets as backend storage
-- Manual bill entry via Settings
-- Spike alert detection and visualization
-- CSV export
-- Sortable bills table with provider drill-down
-- Due-date calendar
+## MVP (current)
 
-## Stage 2 — Multi-user
-- Supabase PostgreSQL backend (schema maps cleanly from Stage 1 Sheets)
-- Auth (email + Google OAuth) via Supabase Auth
-- Hosted email inbox per user (dedicated bills@ address)
-- Automated Gmail → Claude → DB pipeline running on a schedule
-- Email/push notifications for spike alerts
-- PR preview deployments via Vercel
+- [x] Dashboard with summary strip
+- [x] Calendar view
+- [x] Charts (trend, pie, bar)
+- [x] Spike alerts
+- [x] Bills table (sortable, filterable)
+- [x] Provider profile drill-down
+- [x] Historical matrix
+- [x] Manual bill/provider entry
+- [x] CSV export
+- [x] Mock data seed
 
-## Stage 3 — Commercial
-- Plaid bank transaction integration (reconcile bills against actual charges)
-- Mobile app (React Native)
-- Subscription billing (Stripe)
-- AI insights engine: spending forecasts, anomaly explanations, contract renewal alerts
-- White-label option for financial advisors
+## Phase 2 — Gmail Integration
+
+- [ ] Google OAuth flow
+- [ ] Fetch emails by label
+- [ ] PDF attachment extraction
+- [ ] Claude API bill parsing
+- [ ] New provider auto-detection
+
+## Phase 3 — Persistence
+
+- [ ] Google Sheets as database
+- [ ] Read/write bills and providers
+- [ ] Multi-user support via sheet sharing
+
+## Phase 4 — Intelligence
+
+- [ ] Automatic baseline recalculation
+- [ ] Trend anomaly detection
+- [ ] Bill due-date prediction
+- [ ] Natural language bill query via Claude

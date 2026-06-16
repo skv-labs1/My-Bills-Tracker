@@ -1,56 +1,40 @@
 # Data Schema
 
-## Google Sheets (Stage 1)
+## Bill
 
-### Sheet: `bills`
-| Column | Type | Notes |
+| Field | Type | Description |
 |---|---|---|
-| id | string | UUID |
-| provider | string | e.g. Rogers |
-| category | string | Telecom / Utilities / Streaming / Insurance / Internet / Other |
-| amount | number | Actual billed amount (CAD) |
-| expected | number | Baseline / expected amount |
-| variance_pct | number | (actual−expected)/expected×100 |
-| due_date | date | YYYY-MM-DD |
-| billing_period_start | date | |
-| billing_period_end | date | |
-| account_number | string | |
-| payment_method | string | Credit Card / Bank Transfer / etc. |
-| flagged | boolean | true if variance exceeds provider threshold |
-| flag_reason | string | Human-readable spike explanation |
-| email_id | string | Gmail message ID (for traceability) |
-| parsed_at | datetime | When Claude extracted this bill |
+| `id` | string | Unique identifier |
+| `provider` | string | Provider name |
+| `category` | string | Telecom / Internet / Utilities / Streaming / Insurance / Other |
+| `amount` | number | Actual billed amount |
+| `expected` | number | Expected / baseline amount |
+| `variance_pct` | number | `(amount - expected) / expected * 100` |
+| `due_date` | string | ISO date (YYYY-MM-DD) |
+| `billing_period_start` | string | ISO date |
+| `billing_period_end` | string | ISO date |
+| `account_number` | string | Account reference |
+| `payment_method` | string | Credit Card / Bank Transfer / etc. |
+| `flagged` | boolean | True if variance exceeds threshold |
+| `flag_reason` | string | Human-readable spike reason |
+| `status` | string | upcoming / paid / overdue |
 
-### Sheet: `providers`
-| Column | Type | Notes |
+## Provider
+
+| Field | Type | Description |
 |---|---|---|
-| provider_name | string | Unique key |
-| category | string | |
-| baseline_amount | number | Initial / rolling-average billed amount |
-| spike_threshold_pct | number | Per-provider override (default 10) |
-| first_seen | date | |
-| notes | string | |
-| active | boolean | |
+| `id` | string | Unique identifier |
+| `provider_name` | string | Display name |
+| `category` | string | Category |
+| `baseline_amount` | number | Expected monthly amount |
+| `spike_threshold_pct` | number | Alert threshold in % |
+| `first_seen` | string | ISO date first bill was received |
+| `active` | boolean | Whether provider is active |
 
-### Sheet: `settings`
-| Column | Notes |
-|---|---|
-| key | Setting name |
-| value | Setting value (serialized as string) |
+## Settings
 
-Default settings: `default_threshold=10`, `currency=CAD`, `timezone=America/Toronto`
-
-## Future PostgreSQL Schema (Stage 2)
-
-Column names above map 1:1. Additional tables:
-
-```sql
--- Multi-tenancy
-users (id, email, google_oauth_token, created_at)
-
--- Raw email log before parsing
-email_queue (id, user_id, gmail_message_id, received_at, processed_at, status)
-
--- Audit history
-audit_log (id, table_name, row_id, changed_by, changed_at, diff_json)
-```
+| Field | Type | Description |
+|---|---|---|
+| `default_threshold` | number | Global spike threshold % |
+| `currency` | string | ISO currency code |
+| `timezone` | string | IANA timezone |
