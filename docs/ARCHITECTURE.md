@@ -1,45 +1,37 @@
-# Architecture — BillTracker
+# Architecture
 
-## Six Dashboard Zones
+## Overview
 
-| Zone | Component | Purpose |
-|---|---|---|
-| 1 | SummaryStrip | 4 metric cards: monthly total, due this week, spikes, MoM change |
-| 2 | CalendarView | Monthly calendar with colour-coded bill due dates |
-| 3 | Charts (3×) | Line trend / Category pie / Actual vs Expected bar |
-| 4 | SpikeAlerts | Cards for bills exceeding the spike threshold |
-| 5 | BillsTable | Sortable, filterable ledger of all bills |
-| 6 | Settings | Add provider/bill, sync Gmail, export CSV, historical matrix |
+BillTracker is a client-side React SPA with no backend. All data lives in React state (seeded from mock data). Future integrations (Gmail, Google Sheets, Claude API) are stubbed in `src/services/`.
 
-## Data Flow (Stage 1)
+## Directory Structure
 
 ```
-Gmail API → gmailService → claudeService → sheetsService → React Context → UI
+src/
+  __mocks__/      Mock data for development
+  components/     UI components
+    Charts/       Recharts wrappers
+  context/        React context (BillsContext)
+  data/           Static seed data
+  services/       External API stubs
+  utils/          Pure helper functions
 ```
 
-Currently the UI runs on mock data from `src/__mocks__/mockData.js`. Replacing the context's initial state with live Sheets data wires up the backend.
+## Data Flow
 
-## Service Layer
+```
+mockData.js → BillsContext → Components
+```
 
-| File | Responsibility |
-|---|---|
-| `gmailService.js` | OAuth, label filtering, attachment fetch |
-| `claudeService.js` | AI extraction of amount, due date, provider, account number |
-| `sheetsService.js` | CRUD on the BillTracker_Data Google Sheet |
-| `pdfService.js` | pdf.js text extraction from email PDF attachments |
+State is managed entirely in `BillsContext`. Components read from context via `useBills()`.
 
 ## Spike Detection
 
-```
-variance = (actual − baseline) / baseline × 100
-```
+`spikeDetection.js` compares `bill.amount` against `provider.baseline_amount`. If the percentage deviation exceeds `provider.spike_threshold_pct`, the bill is flagged.
 
-Bills where `|variance| ≥ threshold` (default 10%) are flagged and surfaced in Zone 4 (SpikeAlerts). Threshold is configurable per-provider and globally via Settings.
+## Future Integrations
 
-## State Management
-
-React Context (`BillsContext`) holds bills, providers, settings, and UI navigation state. No external state library needed at this scale.
-
-## Future DB Migration (Stage 2)
-
-The Google Sheets column names map 1:1 to the planned PostgreSQL schema. The only additions will be `user_id` for multi-tenancy and a `created_at` audit timestamp.
+- **Gmail** (`gmailService.js`): OAuth → fetch emails with Bills label → parse attachments
+- **Claude API** (`claudeService.js`): Extract structured billing data from email/PDF text
+- **Google Sheets** (`sheetsService.js`): Persist bills and providers to a shared spreadsheet
+- **pdf.js** (`pdfService.js`): Extract text from PDF bill attachments

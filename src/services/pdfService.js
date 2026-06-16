@@ -1,7 +1,8 @@
-export async function extractTextFromPDF(_buffer) {
-  throw new Error('PDF service not implemented. Install pdfjs-dist and wire up.')
+export async function extractTextFromPDF(buffer) {
+  // TODO: use pdf.js to extract text
+  throw new Error('PDF service not implemented')
 }
 
-export async function isPDFScanned(_buffer) {
+export async function isPDFScanned(buffer) {
   throw new Error('Not implemented')
 }

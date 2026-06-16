@@ -1,5 +1,5 @@
 import React from 'react'
-import { TrendingUp, AlertTriangle, Calendar, DollarSign } from 'lucide-react'
+import { TrendingUp, TrendingDown, AlertTriangle, Calendar, DollarSign } from 'lucide-react'
 import { useBills } from '../context/BillsContext.jsx'
 import { isDueThisWeek, formatCurrency } from '../utils/dateHelpers.js'
 

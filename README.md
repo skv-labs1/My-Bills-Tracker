@@ -1,90 +1,46 @@
 # BillTracker
 
-A personal bill tracking dashboard for Canadian utilities, telecom, streaming, and insurance bills. Reads forwarded billing emails from Gmail, extracts data using Claude AI, stores it in Google Sheets, and visualizes spending patterns, due dates, and unusual spikes.
+A React + Vite MVP for tracking monthly bills, detecting spending spikes, and visualising trends.
 
 ## Features
 
-- 6-zone dashboard: summary strip, due-date calendar, trend charts, spike alerts, bills table, settings
-- Automatic spike detection (configurable threshold, default 10%)
-- Provider history and billing trends
-- Manual bill and provider entry
-- CSV export
-- Historical matrix view (provider × month)
+- **Dashboard** — 4-card summary strip (monthly spend, due this week, spikes, MoM change)
+- **Calendar view** — bills plotted on a monthly calendar with colour-coded urgency dots
+- **Charts** — 6-month trend line, spend-by-category pie, actual-vs-expected bar
+- **Spike alerts** — bills that deviate from baseline by more than the configured threshold
+- **Bills table** — sortable, filterable table with click-through to provider profile
+- **Provider profile** — per-provider billing history chart + table
+- **Historical matrix** — provider × month spend grid
+- **Settings** — add bills/providers manually, export CSV, adjust spike threshold
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/your-username/my-bills-tracker
-cd my-bills-tracker
-npm install
 cp .env.example .env
-# Fill in .env values (see setup below)
+npm install
 npm run dev
 ```
 
-Open http://localhost:5173 — the dashboard loads with mock data immediately. No API keys needed to explore the UI.
+## Tech Stack
+
+- React 18 + Vite 5
+- Tailwind CSS 3
+- Recharts 2
+- Lucide React icons
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in:
-
 | Variable | Description |
 |---|---|
-| `VITE_CLAUDE_API_KEY` | Anthropic API key |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth 2.0 Client ID |
+| `VITE_CLAUDE_API_KEY` | Anthropic Claude API key (for future email parsing) |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID (for Gmail integration) |
 | `VITE_GOOGLE_API_KEY` | Google API key |
-| `VITE_GOOGLE_SHEET_ID` | ID from your Google Sheet URL |
-| `VITE_GMAIL_BILLS_LABEL` | Gmail label (default: `Bills`) |
-| `VITE_DEFAULT_SPIKE_THRESHOLD` | Spike alert threshold % (default: `10`) |
-| `VITE_CURRENCY` | Currency code (default: `CAD`) |
-| `VITE_TIMEZONE` | Timezone (default: `America/Toronto`) |
-
-## External Service Setup
-
-### A — Gmail
-
-1. Open Gmail → Settings → Filters and Blocked Addresses
-2. Create filter: `from:(*@rogers.com OR *@bell.ca OR *@enbridge.com OR *@netflix.com OR *@spotify.com OR *@hydroone.com OR *@torontohydro.com OR *@telus.com OR *@freedommobile.ca OR *@intact.net OR *@teksavvy.com OR *@beanfield.com)`
-3. Action: Apply label `Bills` (optionally skip inbox)
-4. Check "Also apply to matching conversations" to backfill
-
-### B — Google Sheet
-
-1. Create a new Google Sheet named `BillTracker_Data`
-2. Create 3 tabs: `bills`, `providers`, `settings`
-3. `bills` columns: `id | provider | category | amount | expected | variance_pct | due_date | billing_period_start | billing_period_end | account_number | payment_method | flagged | flag_reason | email_id | parsed_at`
-4. `providers` columns: `provider_name | category | baseline_amount | spike_threshold_pct | first_seen | notes | active`
-5. `settings` columns: `key | value`
-6. Copy the Sheet ID from the URL (string between `/d/` and `/edit`)
-
-### C — Google Cloud
-
-1. Go to https://console.cloud.google.com → New project `billtracker`
-2. Enable Gmail API and Google Sheets API
-3. Create OAuth 2.0 credentials → Web application
-4. Add `http://localhost:5173` and your Vercel URL as authorized origins
-5. Copy Client ID and API Key to `.env`
-
-### D — Claude API
-
-1. Go to https://console.anthropic.com → Settings → API Keys
-2. Create key named `billtracker-prod`
-3. Copy to `VITE_CLAUDE_API_KEY`
-
-## Deploy to Vercel
-
-1. Push this repo to GitHub
-2. Go to https://vercel.com → Add New Project → import the repo
-3. Framework preset: **Vite** · Build: `npm run build` · Output: `dist`
-4. Add all environment variables from `.env`
-5. Click Deploy — live in ~60 seconds
-
-Every push to `main` auto-deploys. Pull requests get preview URLs automatically.
+| `VITE_GOOGLE_SHEET_ID` | Google Sheet ID (for cloud persistence) |
+| `VITE_GMAIL_BILLS_LABEL` | Gmail label to scan for bills (default: Bills) |
+| `VITE_DEFAULT_SPIKE_THRESHOLD` | Default spike detection threshold in % (default: 10) |
+| `VITE_CURRENCY` | Currency code (default: CAD) |
+| `VITE_TIMEZONE` | Timezone (default: America/Toronto) |
 
 ## Roadmap
 
-See [docs/ROADMAP.md](docs/ROADMAP.md) for Stage 1 → 2 → 3 plan.
-
-## Privacy
-
-All your data stays in your own Google account. No third-party servers store your billing information.
+See [docs/ROADMAP.md](docs/ROADMAP.md).
