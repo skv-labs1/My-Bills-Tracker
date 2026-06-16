@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
+import { LogOut } from 'lucide-react'
 import { useBills } from '../context/BillsContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import SummaryStrip from './SummaryStrip.jsx'
 import CalendarView from './CalendarView.jsx'
 import MonthlyTrendChart from './Charts/MonthlyTrendChart.jsx'
@@ -12,6 +14,7 @@ import ProviderProfile from './ProviderProfile.jsx'
 
 export default function Dashboard() {
   const { activeView } = useBills()
+  const { user, logout } = useAuth()
   const [activeTab, setActiveTab] = useState('overview')
 
   if (activeView === 'provider') {
@@ -29,19 +32,33 @@ export default function Dashboard() {
             </svg>
             <span className="text-xl font-semibold text-gray-900">BillTracker</span>
           </div>
-          <nav className="flex gap-1">
-            {['overview', 'calendar', 'table', 'settings'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium capitalize transition-colors ${
-                  activeTab === tab ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </nav>
+          <div className="flex items-center gap-3">
+            <nav className="flex gap-1">
+              {['overview', 'calendar', 'table', 'settings'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium capitalize transition-colors ${
+                    activeTab === tab ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </nav>
+            {user && (
+              <div className="flex items-center gap-2 pl-3 border-l border-gray-200">
+                {user.picture
+                  ? <img src={user.picture} alt={user.name} className="w-7 h-7 rounded-full" />
+                  : <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-medium">{user.name?.[0]}</div>
+                }
+                <span className="text-sm text-gray-600 hidden sm:block">{user.name}</span>
+                <button onClick={logout} title="Logout" className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
