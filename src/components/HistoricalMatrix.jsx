@@ -9,7 +9,10 @@ export default function HistoricalMatrix() {
   const providerNames = [...new Set(bills.map(b => b.provider))]
 
   const lookup = {}
-  bills.forEach(b => { lookup[`${b.provider}__${b.due_date.slice(0, 7)}`] = b })
+  bills.forEach(b => {
+    const key = `${b.provider}__${b.due_date.slice(0, 7)}`
+    lookup[key] = b
+  })
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
