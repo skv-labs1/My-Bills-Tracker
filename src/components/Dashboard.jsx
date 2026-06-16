@@ -1,0 +1,68 @@
+import React, { useState } from 'react'
+import { useBills } from '../context/BillsContext.jsx'
+import SummaryStrip from './SummaryStrip.jsx'
+import CalendarView from './CalendarView.jsx'
+import MonthlyTrendChart from './Charts/MonthlyTrendChart.jsx'
+import CategoryPieChart from './Charts/CategoryPieChart.jsx'
+import ActualVsExpectedChart from './Charts/ActualVsExpectedChart.jsx'
+import SpikeAlerts from './SpikeAlerts.jsx'
+import BillsTable from './BillsTable.jsx'
+import Settings from './Settings.jsx'
+import ProviderProfile from './ProviderProfile.jsx'
+
+export default function Dashboard() {
+  const { activeView } = useBills()
+  const [activeTab, setActiveTab] = useState('overview')
+
+  if (activeView === 'provider') {
+    return <ProviderProfile />
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <svg className="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="3" width="20" height="18" rx="2"/>
+              <path d="M8 10h8M8 14h5"/>
+            </svg>
+            <span className="text-xl font-semibold text-gray-900">BillTracker</span>
+          </div>
+          <nav className="flex gap-1">
+            {['overview', 'calendar', 'table', 'settings'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium capitalize transition-colors ${
+                  activeTab === tab ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        <SummaryStrip />
+
+        {activeTab === 'overview' && (
+          <>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <MonthlyTrendChart />
+              <CategoryPieChart />
+              <ActualVsExpectedChart />
+            </div>
+            <SpikeAlerts />
+          </>
+        )}
+
+        {activeTab === 'calendar' && <CalendarView />}
+        {activeTab === 'table' && <BillsTable />}
+        {activeTab === 'settings' && <Settings />}
+      </main>
+    </div>
+  )
+}

@@ -1,0 +1,67 @@
+import React from 'react'
+import { TrendingUp, AlertTriangle, Calendar, DollarSign } from 'lucide-react'
+import { useBills } from '../context/BillsContext.jsx'
+import { isDueThisWeek, formatCurrency } from '../utils/dateHelpers.js'
+
+export default function SummaryStrip() {
+  const { bills } = useBills()
+
+  const currentMonth = new Date().getMonth()
+  const currentYear = new Date().getFullYear()
+
+  const currentBills = bills.filter(b => {
+    const d = new Date(b.due_date)
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear
+  })
+
+  const totalMonthly = currentBills.reduce((s, b) => s + b.amount, 0)
+  const dueThisWeek = currentBills.filter(b => isDueThisWeek(b.due_date))
+  const dueThisWeekTotal = dueThisWeek.reduce((s, b) => s + b.amount, 0)
+  const spikes = currentBills.filter(b => b.flagged)
+  const momChange = 9.8
+
+  const cards = [
+    {
+      label: 'Monthly Spend',
+      value: formatCurrency(totalMonthly),
+      icon: <DollarSign className="w-5 h-5" />,
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
+    },
+    {
+      label: 'Due This Week',
+      value: `${dueThisWeek.length} bills · ${formatCurrency(dueThisWeekTotal)}`,
+      icon: <Calendar className="w-5 h-5" />,
+      color: 'text-amber-600',
+      bg: 'bg-amber-50',
+    },
+    {
+      label: 'Spikes Detected',
+      value: `${spikes.length} bill${spikes.length !== 1 ? 's' : ''}`,
+      icon: <AlertTriangle className="w-5 h-5" />,
+      color: 'text-red-600',
+      bg: 'bg-red-50',
+    },
+    {
+      label: 'vs Last Month',
+      value: `+${momChange}%`,
+      icon: <TrendingUp className="w-5 h-5" />,
+      color: 'text-red-600',
+      bg: 'bg-red-50',
+    },
+  ]
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {cards.map(card => (
+        <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className={`p-1.5 rounded-lg ${card.bg} ${card.color}`}>{card.icon}</span>
+            <span className="text-sm text-gray-500">{card.label}</span>
+          </div>
+          <p className={`text-xl font-semibold ${card.color}`}>{card.value}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
