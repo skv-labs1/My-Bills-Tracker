@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Plus, Download, RefreshCw } from 'lucide-react'
+import { Plus, Download, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react'
 import { useBills } from '../context/BillsContext.jsx'
 import { CATEGORIES } from '../utils/categoryMapper.js'
 import HistoricalMatrix from './HistoricalMatrix.jsx'
 
 export default function Settings() {
-  const { settings, updateSetting, addProvider, addBill, bills } = useBills()
+  const { settings, updateSetting, addProvider, addBill, bills, syncing, syncResult, error, syncGmail } = useBills()
   const [showAddProvider, setShowAddProvider] = useState(false)
   const [showAddBill, setShowAddBill] = useState(false)
   const [showMatrix, setShowMatrix] = useState(false)
@@ -58,14 +58,37 @@ export default function Settings() {
           <button onClick={exportCSV} className={grayBtn}>
             <Download className="w-4 h-4" /> Export CSV
           </button>
-          <button className={grayBtn} title="Connect Gmail (coming soon)">
-            <RefreshCw className="w-4 h-4" /> Sync Gmail
+          <button onClick={syncGmail} disabled={syncing} className={`${grayBtn} disabled:opacity-50 disabled:cursor-not-allowed`}>
+            <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+            {syncing ? 'Syncing…' : 'Sync Gmail'}
           </button>
           <button onClick={() => setShowMatrix(v => !v)} className={grayBtn}>
             Historical Matrix
           </button>
         </div>
       </div>
+
+      {/* Sync result / error banner */}
+      {syncResult && !syncing && (
+        <div className="flex items-start gap-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/50 rounded-xl p-4 text-sm">
+          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0 mt-0.5" />
+          <div className="text-green-800 dark:text-green-300">
+            <p className="font-medium">Sync complete</p>
+            <p>{syncResult.added} new bill{syncResult.added !== 1 ? 's' : ''} added · {syncResult.skipped} already saved
+              {syncResult.needsReview > 0 && ` · ${syncResult.needsReview} need manual review`}
+            </p>
+          </div>
+        </div>
+      )}
+      {error && !syncing && (
+        <div className="flex items-start gap-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl p-4 text-sm">
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+          <div className="text-red-800 dark:text-red-300">
+            <p className="font-medium">Sync failed</p>
+            <p className="font-mono text-xs mt-0.5">{error}</p>
+          </div>
+        </div>
+      )}
 
       {showAddBill && (
         <div className={cardClass}>

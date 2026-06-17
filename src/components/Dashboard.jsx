@@ -14,10 +14,21 @@ import Settings from './Settings.jsx'
 import ProviderProfile from './ProviderProfile.jsx'
 
 export default function Dashboard() {
-  const { activeView } = useBills()
+  const { activeView, loading } = useBills()
   const { user, logout } = useAuth()
   const { dark, toggle } = useTheme()
   const [activeTab, setActiveTab] = useState('overview')
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-gray-500 dark:text-gray-400">Loading your bills…</p>
+        </div>
+      </div>
+    )
+  }
 
   if (activeView === 'provider') {
     return <ProviderProfile />
