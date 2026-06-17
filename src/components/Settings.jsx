@@ -40,92 +40,91 @@ export default function Settings() {
     a.click()
   }
 
+  const cardClass = 'bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6'
+  const inputClass = 'border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500'
+  const grayBtn = 'flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
+
   return (
     <div className="space-y-6">
-      {/* Actions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Actions</h2>
+      <div className={cardClass}>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h2>
         <div className="flex flex-wrap gap-3">
           <button onClick={() => setShowAddBill(v => !v)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
             <Plus className="w-4 h-4" /> Add Bill
           </button>
-          <button onClick={() => setShowAddProvider(v => !v)} className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+          <button onClick={() => setShowAddProvider(v => !v)} className={grayBtn}>
             <Plus className="w-4 h-4" /> Add Provider
           </button>
-          <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+          <button onClick={exportCSV} className={grayBtn}>
             <Download className="w-4 h-4" /> Export CSV
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors" title="Connect Gmail (coming soon)">
+          <button className={grayBtn} title="Connect Gmail (coming soon)">
             <RefreshCw className="w-4 h-4" /> Sync Gmail
           </button>
-          <button onClick={() => setShowMatrix(v => !v)} className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+          <button onClick={() => setShowMatrix(v => !v)} className={grayBtn}>
             Historical Matrix
           </button>
         </div>
       </div>
 
-      {/* Add Bill form */}
       {showAddBill && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="font-semibold text-gray-800 mb-4">Add Bill Manually</h3>
+        <div className={cardClass}>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Add Bill Manually</h3>
           <form onSubmit={handleAddBill} className="grid grid-cols-2 gap-4">
-            <input required placeholder="Provider" value={billForm.provider} onChange={e => setBillForm(f => ({ ...f, provider: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <select value={billForm.category} onChange={e => setBillForm(f => ({ ...f, category: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <input required placeholder="Provider" value={billForm.provider} onChange={e => setBillForm(f => ({ ...f, provider: e.target.value }))} className={inputClass} />
+            <select value={billForm.category} onChange={e => setBillForm(f => ({ ...f, category: e.target.value }))} className={inputClass}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
-            <input required type="number" step="0.01" placeholder="Actual Amount" value={billForm.amount} onChange={e => setBillForm(f => ({ ...f, amount: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <input type="number" step="0.01" placeholder="Expected Amount (optional)" value={billForm.expected} onChange={e => setBillForm(f => ({ ...f, expected: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <input required type="date" value={billForm.due_date} onChange={e => setBillForm(f => ({ ...f, due_date: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <select value={billForm.status} onChange={e => setBillForm(f => ({ ...f, status: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <input required type="number" step="0.01" placeholder="Actual Amount" value={billForm.amount} onChange={e => setBillForm(f => ({ ...f, amount: e.target.value }))} className={inputClass} />
+            <input type="number" step="0.01" placeholder="Expected Amount (optional)" value={billForm.expected} onChange={e => setBillForm(f => ({ ...f, expected: e.target.value }))} className={inputClass} />
+            <input required type="date" value={billForm.due_date} onChange={e => setBillForm(f => ({ ...f, due_date: e.target.value }))} className={inputClass} />
+            <select value={billForm.status} onChange={e => setBillForm(f => ({ ...f, status: e.target.value }))} className={inputClass}>
               {['upcoming','paid','overdue'].map(s => <option key={s}>{s}</option>)}
             </select>
             <div className="col-span-2 flex gap-3">
               <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Save Bill</button>
-              <button type="button" onClick={() => setShowAddBill(false)} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
+              <button type="button" onClick={() => setShowAddBill(false)} className={grayBtn}>Cancel</button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Add Provider form */}
       {showAddProvider && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h3 className="font-semibold text-gray-800 mb-4">Add Provider</h3>
+        <div className={cardClass}>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Add Provider</h3>
           <form onSubmit={handleAddProvider} className="grid grid-cols-2 gap-4">
-            <input required placeholder="Provider Name" value={providerForm.provider_name} onChange={e => setProviderForm(f => ({ ...f, provider_name: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <select value={providerForm.category} onChange={e => setProviderForm(f => ({ ...f, category: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <input required placeholder="Provider Name" value={providerForm.provider_name} onChange={e => setProviderForm(f => ({ ...f, provider_name: e.target.value }))} className={inputClass} />
+            <select value={providerForm.category} onChange={e => setProviderForm(f => ({ ...f, category: e.target.value }))} className={inputClass}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
-            <input required type="number" step="0.01" placeholder="Baseline Amount" value={providerForm.baseline_amount} onChange={e => setProviderForm(f => ({ ...f, baseline_amount: e.target.value }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            <input type="number" placeholder="Spike Threshold %" value={providerForm.spike_threshold_pct} onChange={e => setProviderForm(f => ({ ...f, spike_threshold_pct: parseInt(e.target.value) }))} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <input required type="number" step="0.01" placeholder="Baseline Amount" value={providerForm.baseline_amount} onChange={e => setProviderForm(f => ({ ...f, baseline_amount: e.target.value }))} className={inputClass} />
+            <input type="number" placeholder="Spike Threshold %" value={providerForm.spike_threshold_pct} onChange={e => setProviderForm(f => ({ ...f, spike_threshold_pct: parseInt(e.target.value) }))} className={inputClass} />
             <div className="col-span-2 flex gap-3">
               <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Save Provider</button>
-              <button type="button" onClick={() => setShowAddProvider(false)} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
+              <button type="button" onClick={() => setShowAddProvider(false)} className={grayBtn}>Cancel</button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Spike threshold setting */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="font-semibold text-gray-800 mb-3">Global Settings</h3>
+      <div className={cardClass}>
+        <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-3">Global Settings</h3>
         <div className="flex items-center gap-4">
-          <label className="text-sm text-gray-600">Default Spike Threshold</label>
+          <label className="text-sm text-gray-600 dark:text-gray-400">Default Spike Threshold</label>
           <input
             type="number"
             min="1" max="100"
             value={settings.default_threshold}
             onChange={e => updateSetting('default_threshold', parseInt(e.target.value))}
-            className="w-20 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className={`w-20 ${inputClass}`}
           />
-          <span className="text-sm text-gray-500">%</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">%</span>
         </div>
       </div>
 
-      {/* Historical Matrix */}
       {showMatrix && (
         <div>
-          <h3 className="font-semibold text-gray-800 mb-3">Historical Matrix (Provider x Month)</h3>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-3">Historical Matrix (Provider x Month)</h3>
           <HistoricalMatrix />
         </div>
       )}

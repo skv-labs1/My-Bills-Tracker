@@ -15,23 +15,23 @@ export default function HistoricalMatrix() {
   })
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-x-auto">
       <table className="text-xs">
         <thead>
           <tr>
-            <th className="px-3 py-2 text-left font-medium text-gray-500 whitespace-nowrap">Provider</th>
-            {months.map(m => <th key={m} className="px-3 py-2 font-medium text-gray-500 whitespace-nowrap">{m}</th>)}
+            <th className="px-3 py-2 text-left font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap">Provider</th>
+            {months.map(m => <th key={m} className="px-3 py-2 font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap">{m}</th>)}
           </tr>
         </thead>
         <tbody>
           {providerNames.map(name => (
-            <tr key={name} className="border-t border-gray-50">
-              <td className="px-3 py-2 font-medium text-gray-700 whitespace-nowrap">{name}</td>
+            <tr key={name} className="border-t border-gray-50 dark:border-gray-700/50">
+              <td className="px-3 py-2 font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">{name}</td>
               {months.map(m => {
                 const b = lookup[`${name}__${m}`]
                 return (
-                  <td key={m} className={`px-3 py-2 text-center ${b?.flagged ? 'bg-red-50 text-red-700' : 'text-gray-600'}`}>
-                    {b ? formatCurrency(b.amount) : <span className="text-gray-300">—</span>}
+                  <td key={m} className={`px-3 py-2 text-center ${b?.flagged ? 'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}`}>
+                    {b ? formatCurrency(b.amount) : <span className="text-gray-300 dark:text-gray-600">—</span>}
                   </td>
                 )
               })}

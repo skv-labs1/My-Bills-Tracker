@@ -4,9 +4,9 @@ import { useBills } from '../context/BillsContext.jsx'
 import { formatCurrency, formatDate } from '../utils/dateHelpers.js'
 
 const STATUS_COLORS = {
-  paid: 'bg-green-100 text-green-700',
-  upcoming: 'bg-blue-100 text-blue-700',
-  overdue: 'bg-red-100 text-red-700',
+  paid: 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400',
+  upcoming: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
+  overdue: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
 }
 
 export default function BillsTable() {
@@ -44,23 +44,25 @@ export default function BillsTable() {
     return sortDir === 'asc' ? <ChevronUp className="w-3 h-3 inline" /> : <ChevronDown className="w-3 h-3 inline" />
   }
 
+  const selectClass = 'text-sm border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200'
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200">
-      <div className="p-4 flex gap-3 flex-wrap border-b border-gray-100">
-        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+      <div className="p-4 flex gap-3 flex-wrap border-b border-gray-100 dark:border-gray-700">
+        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className={selectClass}>
           {categories.map(c => <option key={c}>{c}</option>)}
         </select>
-        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 capitalize">
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className={`${selectClass} capitalize`}>
           {statuses.map(s => <option key={s}>{s}</option>)}
         </select>
-        <span className="ml-auto text-sm text-gray-400 self-center">{filtered.length} bills</span>
+        <span className="ml-auto text-sm text-gray-400 dark:text-gray-500 self-center">{filtered.length} bills</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-gray-500">
+            <tr className="border-b border-gray-100 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
               {[['provider','Provider'],['category','Category'],['expected','Expected'],['amount','Actual'],['variance_pct','Variance'],['due_date','Due Date'],['status','Status']].map(([key, label]) => (
-                <th key={key} onClick={() => toggleSort(key)} className="px-4 py-3 font-medium cursor-pointer hover:text-gray-700 whitespace-nowrap">
+                <th key={key} onClick={() => toggleSort(key)} className="px-4 py-3 font-medium cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 whitespace-nowrap">
                   {label} <SortIcon col={key} />
                 </th>
               ))}
@@ -68,17 +70,17 @@ export default function BillsTable() {
           </thead>
           <tbody>
             {filtered.map(bill => (
-              <tr key={bill.id} onClick={() => openProvider(bill)} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors">
-                <td className="px-4 py-3 font-medium text-gray-900">{bill.provider}</td>
-                <td className="px-4 py-3 text-gray-500">{bill.category}</td>
-                <td className="px-4 py-3 text-gray-600">{formatCurrency(bill.expected)}</td>
-                <td className="px-4 py-3 font-medium text-gray-900">{formatCurrency(bill.amount)}</td>
-                <td className={`px-4 py-3 font-medium ${bill.variance_pct > 0 ? 'text-red-600' : bill.variance_pct < 0 ? 'text-green-600' : 'text-gray-400'}`}>
+              <tr key={bill.id} onClick={() => openProvider(bill)} className="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
+                <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{bill.provider}</td>
+                <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{bill.category}</td>
+                <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatCurrency(bill.expected)}</td>
+                <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{formatCurrency(bill.amount)}</td>
+                <td className={`px-4 py-3 font-medium ${bill.variance_pct > 0 ? 'text-red-600 dark:text-red-400' : bill.variance_pct < 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
                   {bill.variance_pct > 0 ? '+' : ''}{bill.variance_pct.toFixed(1)}%
                 </td>
-                <td className="px-4 py-3 text-gray-600">{formatDate(bill.due_date)}</td>
+                <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatDate(bill.due_date)}</td>
                 <td className="px-4 py-3">
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_COLORS[bill.status] || 'bg-gray-100 text-gray-600'}`}>{bill.status}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_COLORS[bill.status] || 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>{bill.status}</span>
                 </td>
               </tr>
             ))}

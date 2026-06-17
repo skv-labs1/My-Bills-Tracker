@@ -37,20 +37,20 @@ export default function CalendarView() {
   const selectedBills = selectedDay ? (billsByDay[selectedDay] || []) : []
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           {viewDate.toLocaleDateString('en-CA', { month: 'long', year: 'numeric' })}
         </h2>
         <div className="flex gap-2">
-          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100"><ChevronLeft className="w-4 h-4" /></button>
-          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100"><ChevronRight className="w-4 h-4" /></button>
+          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"><ChevronLeft className="w-4 h-4" /></button>
+          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"><ChevronRight className="w-4 h-4" /></button>
         </div>
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-1">
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-          <div key={d} className="text-center text-xs font-medium text-gray-400 py-1">{d}</div>
+          <div key={d} className="text-center text-xs font-medium text-gray-400 dark:text-gray-500 py-1">{d}</div>
         ))}
       </div>
 
@@ -65,10 +65,10 @@ export default function CalendarView() {
               onClick={() => setSelectedDay(dayBills.length ? day : null)}
               className={`relative p-2 rounded-lg text-sm text-center transition-colors
                 ${isToday ? 'ring-2 ring-blue-400' : ''}
-                ${dayBills.length ? 'cursor-pointer hover:bg-gray-50' : 'cursor-default'}
+                ${dayBills.length ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700' : 'cursor-default'}
               `}
             >
-              <span className={`font-medium ${isToday ? 'text-blue-600' : 'text-gray-700'}`}>{day}</span>
+              <span className={`font-medium ${isToday ? 'text-blue-600' : 'text-gray-700 dark:text-gray-200'}`}>{day}</span>
               {dayBills.length > 0 && (
                 <div className="flex flex-wrap gap-0.5 mt-0.5 justify-center">
                   {dayBills.map(b => (
@@ -81,24 +81,22 @@ export default function CalendarView() {
         })}
       </div>
 
-      {/* Legend */}
-      <div className="flex gap-4 mt-4 text-xs text-gray-500">
+      <div className="flex gap-4 mt-4 text-xs text-gray-500 dark:text-gray-400">
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-500 inline-block" /> Normal</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400 inline-block" /> Due soon</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> Spike</span>
       </div>
 
-      {/* Day detail popover */}
       {selectedDay && selectedBills.length > 0 && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
           <div className="flex justify-between items-center mb-2">
-            <span className="font-medium text-gray-700">Bills on {viewDate.toLocaleDateString('en-CA', { month: 'short' })} {selectedDay}</span>
-            <button onClick={() => setSelectedDay(null)}><X className="w-4 h-4 text-gray-400" /></button>
+            <span className="font-medium text-gray-700 dark:text-gray-200">Bills on {viewDate.toLocaleDateString('en-CA', { month: 'short' })} {selectedDay}</span>
+            <button onClick={() => setSelectedDay(null)}><X className="w-4 h-4 text-gray-400 dark:text-gray-500" /></button>
           </div>
           {selectedBills.map(b => (
             <div key={b.id} className="flex justify-between py-1 text-sm">
-              <span className={b.flagged ? 'text-red-600 font-medium' : 'text-gray-700'}>{b.provider}</span>
-              <span className="text-gray-600">{formatCurrency(b.amount)}</span>
+              <span className={b.flagged ? 'text-red-600 dark:text-red-400 font-medium' : 'text-gray-700 dark:text-gray-300'}>{b.provider}</span>
+              <span className="text-gray-600 dark:text-gray-400">{formatCurrency(b.amount)}</span>
             </div>
           ))}
         </div>
