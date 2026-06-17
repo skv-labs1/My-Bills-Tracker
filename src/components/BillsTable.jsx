@@ -9,6 +9,11 @@ const STATUS_COLORS = {
   overdue: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
 }
 
+// Sheets stores booleans as strings — treat 'true'/'TRUE' as truthy too.
+function isTruthy(v) {
+  return v === true || v === 'true' || v === 'TRUE'
+}
+
 export default function BillsTable() {
   const { bills, providers, setActiveView, setSelectedProvider } = useBills()
   const [sortKey, setSortKey] = useState('due_date')
@@ -71,7 +76,17 @@ export default function BillsTable() {
           <tbody>
             {filtered.map(bill => (
               <tr key={bill.id} onClick={() => openProvider(bill)} className="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
-                <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{bill.provider}</td>
+                <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                  <span className="inline-flex items-center gap-1.5">
+                    {bill.provider}
+                    {bill.parsed_by === 'gemini' && (
+                      <span title="Parsed by AI" className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">AI</span>
+                    )}
+                    {isTruthy(bill.needs_review) && (
+                      <span title="Low confidence — please verify" className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">Review</span>
+                    )}
+                  </span>
+                </td>
                 <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{bill.category}</td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatCurrency(bill.expected)}</td>
                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{formatCurrency(bill.amount)}</td>
