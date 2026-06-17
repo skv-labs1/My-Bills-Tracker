@@ -1,17 +1,77 @@
 import React, { useState } from 'react'
-import { Plus, Download, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react'
+import { Plus, Download, RefreshCw, CheckCircle, AlertCircle, Bug } from 'lucide-react'
 import { useBills } from '../context/BillsContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import { CATEGORIES } from '../utils/categoryMapper.js'
 import HistoricalMatrix from './HistoricalMatrix.jsx'
 
 export default function Settings() {
   const { settings, updateSetting, addProvider, addBill, bills, syncing, syncResult, error, syncGmail } = useBills()
+  const { token } = useAuth()
   const [showAddProvider, setShowAddProvider] = useState(false)
   const [showAddBill, setShowAddBill] = useState(false)
   const [showMatrix, setShowMatrix] = useState(false)
+  const [debugLog, setDebugLog] = useState([])
+  const [debugging, setDebugging] = useState(false)
 
   const [providerForm, setProviderForm] = useState({ provider_name: '', category: 'Utilities', baseline_amount: '', spike_threshold_pct: 10 })
   const [billForm, setBillForm] = useState({ provider: '', category: 'Utilities', amount: '', expected: '', due_date: '', status: 'upcoming' })
+
+  async function runDiagnostics() {
+    setDebugging(true)
+    const log = []
+    const add = (msg, ok) => { log.push({ msg, ok }); setDebugLog([...log]) }
+
+    // 1. Token
+    add(token ? `Token present (${token.slice(0,20)}…)` : 'No token found — log out and back in', !!token)
+    if (!token) { setDebugging(false); return }
+
+    // 2. Token info — check which scopes were granted
+    try {
+      const r = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`)
+      const d = await r.json()
+      const scopes = d.scope || ''
+      const hasSheets = scopes.includes('spreadsheets')
+      const hasGmail = scopes.includes('gmail')
+      add(`Token scopes: ${scopes}`, true)
+      add(`Sheets scope granted: ${hasSheets}`, hasSheets)
+      add(`Gmail scope granted: ${hasGmail}`, hasGmail)
+    } catch (e) {
+      add(`Token info failed: ${e.message}`, false)
+    }
+
+    // 3. Sheet ID
+    const sheetId = import.meta.env.VITE_GOOGLE_SHEET_ID
+    add(sheetId ? `Sheet ID: ${sheetId}` : 'VITE_GOOGLE_SHEET_ID not set!', !!sheetId)
+    if (!sheetId) { setDebugging(false); return }
+
+    // 4. Sheets API — read spreadsheet metadata
+    try {
+      const r = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}?fields=spreadsheetId,properties.title`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const d = await r.json()
+      if (r.ok) add(`Sheets API OK — Sheet title: "${d.properties?.title}"`, true)
+      else add(`Sheets API failed ${r.status}: ${d?.error?.message}`, false)
+    } catch (e) {
+      add(`Sheets API fetch error: ${e.message}`, false)
+    }
+
+    // 5. Gmail API — list 1 message from virkar
+    try {
+      const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/virkar.bills@gmail.com/messages?maxResults=1`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const d = await r.json()
+      if (r.ok) add(`Gmail API OK — ${d.resultSizeEstimate ?? 0} messages found`, true)
+      else add(`Gmail API failed ${r.status}: ${d?.error?.message}`, false)
+    } catch (e) {
+      add(`Gmail API fetch error: ${e.message}`, false)
+    }
+
+    setDebugging(false)
+  }
+
 
   function handleAddProvider(e) {
     e.preventDefault()
@@ -65,8 +125,24 @@ export default function Settings() {
           <button onClick={() => setShowMatrix(v => !v)} className={grayBtn}>
             Historical Matrix
           </button>
+          <button onClick={runDiagnostics} disabled={debugging} className={`${grayBtn} disabled:opacity-50`}>
+            <Bug className="w-4 h-4" />
+            {debugging ? 'Diagnosing…' : 'Diagnose'}
+          </button>
         </div>
       </div>
+
+      {debugLog.length > 0 && (
+        <div className={`${cardClass} font-mono text-xs space-y-1`}>
+          <p className="font-semibold text-gray-700 dark:text-gray-200 mb-2 font-sans">Diagnostics</p>
+          {debugLog.map((entry, i) => (
+            <div key={i} className={`flex items-start gap-2 ${entry.ok ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'}`}>
+              <span>{entry.ok ? '✓' : '✗'}</span>
+              <span className="break-all">{entry.msg}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Sync result / error banner */}
       {syncResult && !syncing && (
