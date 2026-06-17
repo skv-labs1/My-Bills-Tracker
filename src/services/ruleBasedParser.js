@@ -154,6 +154,16 @@ const PROVIDER_RULES = [
     dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
+  // --- Home Services ---
+  {
+    provider: 'Reliance Home Comfort',
+    category: 'Utilities',
+    domains: ['reliancehomecomfort.com', 'reliancehome.com'],
+    subjectPatterns: [/reliance/i],
+    amountRegex: /(?:amount due)\s*:?\s*\$?\s*([\d,]+\.?\d{0,2})/i,
+    dueDateRegex: /(?:due date)[^\d]*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+  },
+
   // --- Kids / Recreation ---
   {
     provider: 'Goldfish Swim School',
@@ -210,11 +220,15 @@ function parseDateString(raw) {
     const [, d, m, y] = dmy
     return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
   }
-  // MM/DD/YYYY
+  // MM/DD/YYYY or MM/DD/YY — only treat as MDY if day part > 12 (unambiguous) or fallback
   const mdy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/)
   if (mdy) {
     const [, m, d, y] = mdy
     const year = y.length === 2 ? `20${y}` : y
+    // If day > 12, it can't be a month so it must be DD/MM — swap
+    if (parseInt(m) > 12) {
+      return `${year}-${d.padStart(2,'0')}-${m.padStart(2,'0')}`
+    }
     return `${year}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
   }
   // "June 6, 2026" or "June 6 2026"
