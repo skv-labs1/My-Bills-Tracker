@@ -9,7 +9,7 @@ const PROVIDER_RULES = [
     domains: ['rogers.com', 'rogershelp.com'],
     subjectPatterns: [/rogers/i],
     amountRegex: /(?:your bill total|amount due|total due|balance due|payment due|total amount|current bill|pay now|owing)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:payment date|due date|payment due|due by|due on|pay by|pay before|withdraw.*?on or after)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:payment date|due date|payment due|due by|due on|pay by|pay before|on or after)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Bell',

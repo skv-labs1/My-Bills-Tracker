@@ -39,6 +39,13 @@ export async function syncEmails(token, { since = null } = {}) {
       continue
     }
 
+    // Fall back to email received date when provider doesn't include a due date
+    const emailDate = email.date ? new Date(email.date) : null
+    const emailDateISO = emailDate && !isNaN(emailDate)
+      ? `${emailDate.getFullYear()}-${String(emailDate.getMonth()+1).padStart(2,'0')}-${String(emailDate.getDate()).padStart(2,'0')}`
+      : new Date().toISOString().split('T')[0]
+    const dueDate = parsed.due_date || emailDateISO
+
     const bill = {
       id: `email_${email.id}`,
       provider: parsed.provider || 'Unknown',
@@ -46,8 +53,8 @@ export async function syncEmails(token, { since = null } = {}) {
       amount: parsed.amount || 0,
       expected: parsed.amount || 0,
       variance_pct: 0,
-      due_date: parsed.due_date || '',
-      status: isPastDue(parsed.due_date) ? 'paid' : 'upcoming',
+      due_date: dueDate,
+      status: isPastDue(dueDate) ? 'paid' : 'upcoming',
       flagged: false,
       flag_reason: '',
       parsed_by: parsed.parsed_by || 'none',
