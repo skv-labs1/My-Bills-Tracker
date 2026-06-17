@@ -206,12 +206,15 @@ function parseAmount(raw) {
 function matchRule(emailContent, senderDomain, subject) {
   const domain = (senderDomain || '').toLowerCase()
   const subj = (subject || '').toLowerCase()
+  // For forwarded emails the sender domain won't match — also check body
+  const bodySnippet = (emailContent || '').slice(0, 4000)
 
   for (const rule of PROVIDER_RULES) {
     const domainMatch = rule.domains.some(d => domain.includes(d))
     const subjectMatch = rule.subjectPatterns.some(p => p.test(subj))
+    const bodyMatch = rule.subjectPatterns.some(p => p.test(bodySnippet))
 
-    if (domainMatch || subjectMatch) {
+    if (domainMatch || subjectMatch || bodyMatch) {
       const amountMatch = rule.amountRegex.exec(emailContent)
       const dueDateMatch = rule.dueDateRegex.exec(emailContent)
 
