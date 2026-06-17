@@ -3,7 +3,7 @@ var GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'
 var SHEET_ID       = 'YOUR_GOOGLE_SHEET_ID_HERE'
 
 var BILLS_SHEET    = 'bills'
-var GMAIL_LABEL    = 'bill-emails'  // Custom label — 'Bills' is reserved by Gmail
+var GMAIL_LABEL    = 'BillTracker'  // Custom label — 'Bills' is reserved by Gmail
 var MAX_EMAILS     = 50        // Emails to process per run
 
 // ─── Column definition (must match the web app's sheetsService.js) ────────────
