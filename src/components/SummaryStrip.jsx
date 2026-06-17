@@ -9,9 +9,18 @@ export default function SummaryStrip() {
   const currentMonth = new Date().getMonth()
   const currentYear = new Date().getFullYear()
 
+  // Include bills with no due_date (synced_at this month) alongside normally dated bills
   const currentBills = bills.filter(b => {
-    const d = new Date(b.due_date)
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear
+    if (b.due_date) {
+      const d = new Date(b.due_date)
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear
+    }
+    // No due date — include if synced this month
+    if (b.synced_at) {
+      const s = new Date(b.synced_at)
+      return s.getMonth() === currentMonth && s.getFullYear() === currentYear
+    }
+    return true
   })
 
   const totalMonthly = currentBills.reduce((s, b) => s + b.amount, 0)

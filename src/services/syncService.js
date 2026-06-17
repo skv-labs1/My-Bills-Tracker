@@ -33,7 +33,8 @@ export async function syncEmails(token, { since = null } = {}) {
       senderEmail: email.senderEmail,
     })
 
-    if (!parsed) {
+    // Skip emails that look like non-bills (no provider identified and no amount)
+    if (!parsed || (parsed.needs_review && !parsed.amount)) {
       skipped++
       continue
     }
