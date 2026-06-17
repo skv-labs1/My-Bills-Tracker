@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { LogOut, Sun, Moon } from 'lucide-react'
+import { LogOut, Sun, Moon, Plus } from 'lucide-react'
 import { useBills } from '../context/BillsContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
@@ -12,12 +12,14 @@ import SpikeAlerts from './SpikeAlerts.jsx'
 import BillsTable from './BillsTable.jsx'
 import Settings from './Settings.jsx'
 import ProviderProfile from './ProviderProfile.jsx'
+import AddBillModal from './AddBillModal.jsx'
 
 export default function Dashboard() {
   const { activeView, loading } = useBills()
   const { user, logout } = useAuth()
   const { dark, toggle } = useTheme()
   const [activeTab, setActiveTab] = useState('overview')
+  const [showAddBill, setShowAddBill] = useState(false)
 
   if (loading) {
     return (
@@ -61,6 +63,16 @@ export default function Dashboard() {
                 </button>
               ))}
             </nav>
+
+            <button
+              onClick={() => setShowAddBill(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+              title="Add bill manually"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Add Bill</span>
+            </button>
+
             <button
               onClick={toggle}
               title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -68,6 +80,7 @@ export default function Dashboard() {
             >
               {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
+
             {user && (
               <div className="flex items-center gap-2 pl-3 border-l border-gray-200 dark:border-gray-600">
                 {user.picture
@@ -102,6 +115,8 @@ export default function Dashboard() {
         {activeTab === 'table' && <BillsTable />}
         {activeTab === 'settings' && <Settings />}
       </main>
+
+      {showAddBill && <AddBillModal onClose={() => setShowAddBill(false)} />}
     </div>
   )
 }
