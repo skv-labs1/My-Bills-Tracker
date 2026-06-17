@@ -159,7 +159,7 @@ const PROVIDER_RULES = [
     provider: 'Oakville Hydro',
     category: 'Utilities',
     domains: ['oakvillehydro.com'],
-    subjectPatterns: [/oakville hydro/i],
+    subjectPatterns: [/oakville hydro/i, /oakvillehydro/i],
     amountRegex: /(?:total account balance|amount due|balance)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
     dueDateRegex: /(?:due on|due date|payment due)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
@@ -259,7 +259,7 @@ function matchRule(emailContent, senderDomain, subject) {
   const bodySnippet = (emailContent || '').slice(0, 4000)
 
   for (const rule of PROVIDER_RULES) {
-    const domainMatch = rule.domains.some(d => domain.includes(d))
+    const domainMatch = rule.domains.some(d => domain.includes(d) || bodySnippet.includes(d))
     const subjectMatch = rule.subjectPatterns.some(p => p.test(subj))
     const bodyMatch = rule.subjectPatterns.some(p => p.test(bodySnippet))
 
