@@ -1,5 +1,5 @@
 import { fetchBillEmails } from './gmailService.js'
-import { parseBillEmail } from './claudeService.js'
+import { parseBillEmail } from './geminiService.js'
 import { addBillsToSheet, getAllBills } from './sheetsService.js'
 import { isPastDue } from '../utils/dateHelpers.js'
 

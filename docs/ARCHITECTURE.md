@@ -29,9 +29,11 @@ State is managed entirely in `BillsContext`. Components read from context via `u
 
 `spikeDetection.js` compares `bill.amount` against `provider.baseline_amount`. If the percentage deviation exceeds `provider.spike_threshold_pct`, the bill is flagged.
 
-## Future Integrations
+## Email Parsing Pipeline
 
-- **Gmail** (`gmailService.js`): OAuth → fetch emails with Bills label → parse attachments
-- **Claude API** (`claudeService.js`): Extract structured billing data from email/PDF text
-- **Google Sheets** (`sheetsService.js`): Persist bills and providers to a shared spreadsheet
-- **pdf.js** (`pdfService.js`): Extract text from PDF bill attachments
+When the user clicks **Sync Gmail**, `syncService.js` runs:
+
+- **Gmail** (`gmailService.js`): OAuth → fetch emails from the bills inbox
+- **Rule-based parser** (`ruleBasedParser.js`): regex rules for ~25 known Canadian providers — instant and free
+- **Gemini AI** (`geminiService.js`): free-tier Gemini fallback that reads any email format the rules can't recognise
+- **Google Sheets** (`sheetsService.js`): Persist parsed bills and providers to a shared spreadsheet

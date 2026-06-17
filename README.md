@@ -32,7 +32,7 @@ npm run dev
 
 | Variable | Description |
 |---|---|
-| `VITE_CLAUDE_API_KEY` | Anthropic Claude API key (for future email parsing) |
+| `VITE_GEMINI_API_KEY` | Free Gemini API key from aistudio.google.com (AI email parsing, no credit card) |
 | `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID (for Gmail integration) |
 | `VITE_GOOGLE_API_KEY` | Google API key |
 | `VITE_GOOGLE_SHEET_ID` | Google Sheet ID (for cloud persistence) |
