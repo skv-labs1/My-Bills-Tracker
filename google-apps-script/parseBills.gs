@@ -3,8 +3,11 @@ var GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'
 var SHEET_ID       = 'YOUR_GOOGLE_SHEET_ID_HERE'
 
 var BILLS_SHEET    = 'bills'
-var GMAIL_LABEL    = 'BillTracker'  // Custom label — 'Bills' is reserved by Gmail
-var MAX_EMAILS     = 50        // Emails to process per run
+var GMAIL_LABEL    = 'BillTracker'  // Custom label — 'Bills' is reserved by Gmail. Set '' to use BILL_KEYWORDS filter instead.
+var MAX_EMAILS     = 100       // Emails to process per run
+
+// Keywords to pre-filter emails when no label is set (avoids sending non-bills to Gemini)
+var BILL_KEYWORDS  = ['amount due', 'bill', 'invoice', 'payment', 'statement', 'e-bill', 'ebill', 'receipt', 'charge', 'subscription']
 
 // ─── Column definition (must match the web app's sheetsService.js) ────────────
 var COLUMNS = [
@@ -47,6 +50,13 @@ function parseBills() {
       var from     = msg.getFrom()
       var dateObj  = msg.getDate()
       var body     = msg.getPlainBody() || msg.getBody().replace(/<[^>]+>/g, ' ')
+
+      // When reading full inbox (no label), skip emails that don't look like bills
+      if (!GMAIL_LABEL) {
+        var combined = (subject + ' ' + body).toLowerCase()
+        var looksLikeBill = BILL_KEYWORDS.some(function(kw) { return combined.indexOf(kw) !== -1 })
+        if (!looksLikeBill) continue
+      }
 
       var parsed = callGemini(subject, from, body, dateObj)
       if (!parsed) continue
@@ -128,7 +138,14 @@ function callGemini(subject, from, body, emailDate) {
     })
 
     var data = JSON.parse(response.getContentText())
-    var text = data.candidates && data.candidates[0].content.parts[0].text
+
+    // Log full response if no candidates (helps debug API key / quota issues)
+    if (!data.candidates || !data.candidates[0]) {
+      Logger.log('Gemini no candidates for "' + subject + '": ' + response.getContentText().substring(0, 300))
+      return null
+    }
+
+    var text = data.candidates[0].content.parts[0].text
 
     // Strip markdown code fences if present
     text = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
