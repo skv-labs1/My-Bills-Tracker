@@ -154,6 +154,16 @@ const PROVIDER_RULES = [
     dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
+  // --- Kids / Recreation ---
+  {
+    provider: 'Goldfish Swim School',
+    category: 'Kids',
+    domains: ['goldfishswimschool.com'],
+    subjectPatterns: [/goldfish swim/i],
+    amountRegex: /(?:--\s*|payment.*?)\$?([\d,]+\.?\d{0,2})\s*(?:\n|$|outstanding)/im,
+    dueDateRegex: /(?:as of|payment.*?processed.*?)\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+  },
+
   // --- Insurance ---
   {
     provider: 'Intact',
@@ -191,9 +201,24 @@ const PROVIDER_RULES = [
 
 function parseDateString(raw) {
   if (!raw) return null
-  // Try ISO first
-  if (/^\d{4}-\d{2}-\d{2}$/.test(raw.trim())) return raw.trim()
-  const d = new Date(raw.replace(',', ''))
+  const s = raw.trim()
+  // ISO
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s
+  // DD/MM/YYYY or DD-MM-YYYY
+  const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/)
+  if (dmy) {
+    const [, d, m, y] = dmy
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
+  }
+  // MM/DD/YYYY
+  const mdy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/)
+  if (mdy) {
+    const [, m, d, y] = mdy
+    const year = y.length === 2 ? `20${y}` : y
+    return `${year}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
+  }
+  // "June 6, 2026" or "June 6 2026"
+  const d = new Date(s.replace(',', ''))
   if (!isNaN(d)) return d.toISOString().split('T')[0]
   return null
 }
