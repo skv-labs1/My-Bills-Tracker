@@ -59,6 +59,7 @@ function parseBills() {
       }
 
       var parsed = callGemini(subject, from, body, dateObj)
+      Utilities.sleep(2000) // 2s between calls — stay within free tier rate limits
       if (!parsed) continue
       if (parsed.confidence === 'LOW') continue
 
@@ -122,7 +123,7 @@ function callGemini(subject, from, body, emailDate) {
     body.substring(0, 4000),
   ].join('\n')
 
-  var url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_API_KEY
+  var url = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=' + GEMINI_API_KEY
 
   var payload = {
     contents: [{ parts: [{ text: prompt }] }],
