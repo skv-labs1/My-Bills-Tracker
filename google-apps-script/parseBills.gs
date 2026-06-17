@@ -20,9 +20,18 @@ function parseBills() {
   var sheet = getOrCreateSheet()
   var existingEmailIds = getExistingEmailIds(sheet)
 
-  var threads = GMAIL_LABEL
-    ? GmailApp.getUserLabelByName(GMAIL_LABEL).getThreads(0, MAX_EMAILS)
-    : GmailApp.getInboxThreads(0, MAX_EMAILS)
+  var threads
+  if (GMAIL_LABEL) {
+    var label = GmailApp.getUserLabelByName(GMAIL_LABEL)
+    if (!label) {
+      Logger.log('Label "' + GMAIL_LABEL + '" not found. Reading entire inbox instead.')
+      threads = GmailApp.getInboxThreads(0, MAX_EMAILS)
+    } else {
+      threads = label.getThreads(0, MAX_EMAILS)
+    }
+  } else {
+    threads = GmailApp.getInboxThreads(0, MAX_EMAILS)
+  }
 
   var newRows = []
 
