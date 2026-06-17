@@ -1,6 +1,7 @@
 import { fetchBillEmails } from './gmailService.js'
 import { parseBillEmail } from './claudeService.js'
 import { addBillsToSheet, getAllBills } from './sheetsService.js'
+import { isPastDue } from '../utils/dateHelpers.js'
 
 /**
  * Full sync:
@@ -47,7 +48,7 @@ export async function syncEmails(token, { since = null } = {}) {
       expected: parsed.amount || 0,
       variance_pct: 0,
       due_date: parsed.due_date || '',
-      status: 'upcoming',
+      status: isPastDue(parsed.due_date) ? 'paid' : 'upcoming',
       flagged: false,
       flag_reason: '',
       parsed_by: parsed.parsed_by || 'none',
