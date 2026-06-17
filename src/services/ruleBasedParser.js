@@ -242,8 +242,15 @@ function parseDateString(raw) {
     return `${year}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
   }
   // "June 6, 2026" or "June 6 2026"
-  const d = new Date(s.replace(',', ''))
-  if (!isNaN(d)) return d.toISOString().split('T')[0]
+  const named = s.replace(',', '').trim()
+  const d = new Date(named)
+  if (!isNaN(d)) {
+    // Build ISO string from local date parts to avoid UTC offset shift
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
   return null
 }
 
@@ -252,11 +259,21 @@ function parseAmount(raw) {
   return parseFloat(raw.replace(/,/g, ''))
 }
 
+function normalizeBody(text) {
+  // Collapse tabs, multiple spaces, and soft line breaks into a single space
+  // but preserve newlines so multi-line patterns still work
+  return (text || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n[ \t]+/g, '\n')
+}
+
 function matchRule(emailContent, senderDomain, subject) {
   const domain = (senderDomain || '').toLowerCase()
   const subj = (subject || '').toLowerCase()
+  const body = normalizeBody(emailContent)
   // For forwarded emails the sender domain won't match — also check body
-  const bodySnippet = (emailContent || '').slice(0, 4000)
+  const bodySnippet = body.slice(0, 4000)
 
   for (const rule of PROVIDER_RULES) {
     const domainMatch = rule.domains.some(d => domain.includes(d) || bodySnippet.includes(d))
@@ -264,8 +281,8 @@ function matchRule(emailContent, senderDomain, subject) {
     const bodyMatch = rule.subjectPatterns.some(p => p.test(bodySnippet))
 
     if (domainMatch || subjectMatch || bodyMatch) {
-      const amountMatch = rule.amountRegex.exec(emailContent)
-      const dueDateMatch = rule.dueDateRegex.exec(emailContent)
+      const amountMatch = rule.amountRegex.exec(body)
+      const dueDateMatch = rule.dueDateRegex.exec(body)
 
       const amount = amountMatch ? parseAmount(amountMatch[1]) : null
       const dueDate = dueDateMatch ? parseDateString(dueDateMatch[1]) : null
