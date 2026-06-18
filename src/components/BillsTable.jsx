@@ -53,7 +53,7 @@ export default function BillsTable() {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-      <div className="p-4 flex gap-3 flex-wrap border-b border-gray-100 dark:border-gray-700">
+      <div className="p-3 sm:p-4 flex gap-2 sm:gap-3 flex-wrap border-b border-gray-100 dark:border-gray-700">
         <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className={selectClass}>
           {categories.map(c => <option key={c}>{c}</option>)}
         </select>
@@ -62,7 +62,9 @@ export default function BillsTable() {
         </select>
         <span className="ml-auto text-sm text-gray-400 dark:text-gray-500 self-center">{filtered.length} bills</span>
       </div>
-      <div className="overflow-x-auto">
+
+      {/* Desktop table */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
@@ -77,7 +79,7 @@ export default function BillsTable() {
             {filtered.map(bill => (
               <tr key={bill.id} onClick={() => openProvider(bill)} className="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
                 <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                  <span className="inline-flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1.5 flex-wrap">
                     {bill.provider}
                     {bill.parsed_by === 'gemini' && (
                       <span title="Parsed by AI" className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">AI</span>
@@ -101,6 +103,40 @@ export default function BillsTable() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile card list */}
+      <div className="sm:hidden divide-y divide-gray-100 dark:divide-gray-700">
+        {filtered.map(bill => (
+          <div key={bill.id} onClick={() => openProvider(bill)} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
+            <div className="flex items-start justify-between gap-2 mb-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="font-medium text-gray-900 dark:text-white text-sm">{bill.provider}</span>
+                {bill.parsed_by === 'gemini' && (
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">AI</span>
+                )}
+                {isTruthy(bill.needs_review) && (
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">Review</span>
+                )}
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize shrink-0 ${STATUS_COLORS[bill.status] || 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>{bill.status}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500 dark:text-gray-400">{bill.category} · {formatDate(bill.due_date)}</span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(bill.amount)}</span>
+                {bill.variance_pct !== 0 && (
+                  <span className={`text-xs font-medium ${bill.variance_pct > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                    {bill.variance_pct > 0 ? '+' : ''}{bill.variance_pct.toFixed(1)}%
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <p className="p-6 text-center text-sm text-gray-400 dark:text-gray-500">No bills match the filters</p>
+        )}
       </div>
     </div>
   )

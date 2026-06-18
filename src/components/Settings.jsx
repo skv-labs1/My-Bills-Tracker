@@ -169,7 +169,7 @@ export default function Settings() {
       {showAddBill && (
         <div className={cardClass}>
           <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Add Bill Manually</h3>
-          <form onSubmit={handleAddBill} className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleAddBill} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input required placeholder="Provider" value={billForm.provider} onChange={e => setBillForm(f => ({ ...f, provider: e.target.value }))} className={inputClass} />
             <select value={billForm.category} onChange={e => setBillForm(f => ({ ...f, category: e.target.value }))} className={inputClass}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
@@ -191,7 +191,7 @@ export default function Settings() {
       {showAddProvider && (
         <div className={cardClass}>
           <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4">Add Provider</h3>
-          <form onSubmit={handleAddProvider} className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleAddProvider} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input required placeholder="Provider Name" value={providerForm.provider_name} onChange={e => setProviderForm(f => ({ ...f, provider_name: e.target.value }))} className={inputClass} />
             <select value={providerForm.category} onChange={e => setProviderForm(f => ({ ...f, category: e.target.value }))} className={inputClass}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}

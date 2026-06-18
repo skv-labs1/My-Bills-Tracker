@@ -68,7 +68,7 @@ export default function SummaryStrip() {
             <span className={`p-1.5 rounded-lg ${card.bg} ${card.color}`}>{card.icon}</span>
             <span className="text-sm text-gray-500 dark:text-gray-400">{card.label}</span>
           </div>
-          <p className={`text-xl font-semibold ${card.color}`}>{card.value}</p>
+          <p className={`text-lg sm:text-xl font-semibold ${card.color} break-words`}>{card.value}</p>
         </div>
       ))}
     </div>
