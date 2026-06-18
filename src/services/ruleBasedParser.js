@@ -148,7 +148,8 @@ const PROVIDER_RULES = [
   {
     provider: 'YouTube Premium',
     category: 'Streaming',
-    domains: ['google.com', 'youtube.com'],
+    // Intentionally no google.com domain — too broad, matches Gmail forwarding headers
+    domains: ['youtube.com'],
     subjectPatterns: [/youtube premium/i],
     amountRegex: /(?:charged|amount|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
     dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
@@ -182,6 +183,17 @@ const PROVIDER_RULES = [
     subjectPatterns: [/goldfish swim/i],
     amountRegex: /(?:--\s*|payment.*?)\$?([\d,]+\.?\d{0,2})\s*(?:\n|$|outstanding)/im,
     dueDateRegex: /(?:as of|payment.*?processed.*?)\s*(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
+  },
+
+  // --- Banking / Credit Cards ---
+  {
+    provider: 'Scotiabank',
+    category: 'CreditCard',
+    domains: ['scotiabank.com'],
+    subjectPatterns: [/scotiabank/i, /scotia/i, /e-statement/i],
+    // Prefer statement balance; fall back to minimum payment
+    amountRegex: /(?:statement balance|new balance|balance)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
+    dueDateRegex: /(?:payment due date|due date|payment due)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Insurance ---

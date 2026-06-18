@@ -4,6 +4,8 @@ const CATEGORY_COLORS = {
   Utilities: '#f59e0b',
   Streaming: '#10b981',
   Insurance: '#ef4444',
+  CreditCard: '#ec4899',
+  Kids: '#f97316',
   Other: '#6b7280',
 }
 
