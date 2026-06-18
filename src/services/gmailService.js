@@ -26,31 +26,39 @@ function decodeBase64(str) {
   }
 }
 
-function extractBody(payload) {
-  if (!payload) return ''
+// Recursively collect all text segments from every MIME part (including
+// nested message/rfc822 parts that Gmail uses for forwarded emails).
+function collectTextParts(payload, parts = []) {
+  if (!payload) return parts
 
-  // Single-part plain text
   if (payload.mimeType === 'text/plain' && payload.body?.data) {
-    return decodeBase64(payload.body.data)
+    parts.push({ type: 'plain', text: decodeBase64(payload.body.data) })
+  } else if (payload.mimeType === 'text/html' && payload.body?.data) {
+    const raw = decodeBase64(payload.body.data)
+    parts.push({ type: 'html', text: raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() })
   }
 
-  // Multipart — prefer text/plain, fall back to text/html stripped of tags
   if (payload.parts) {
-    const plain = payload.parts.find(p => p.mimeType === 'text/plain')
-    if (plain?.body?.data) return decodeBase64(plain.body.data)
-
-    const html = payload.parts.find(p => p.mimeType === 'text/html')
-    if (html?.body?.data) {
-      const raw = decodeBase64(html.body.data)
-      return raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
-    }
-
-    // Nested multipart
     for (const part of payload.parts) {
-      const nested = extractBody(part)
-      if (nested) return nested
+      collectTextParts(part, parts)
     }
   }
+
+  return parts
+}
+
+// Pick the richest text from all collected parts.
+// Prefer the longest plain-text segment (likely the actual bill body inside
+// a forwarded message), falling back to the longest HTML-stripped segment.
+function extractBody(payload) {
+  const parts = collectTextParts(payload)
+  if (!parts.length) return ''
+
+  const plains = parts.filter(p => p.type === 'plain').sort((a, b) => b.text.length - a.text.length)
+  if (plains.length) return plains[0].text
+
+  const htmls = parts.filter(p => p.type === 'html').sort((a, b) => b.text.length - a.text.length)
+  if (htmls.length) return htmls[0].text
 
   return ''
 }
