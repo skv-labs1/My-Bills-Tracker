@@ -102,8 +102,12 @@ export async function fetchBillEmails(token, { maxResults = 100, since = null } 
       const senderEmail = senderMatch ? senderMatch[1] : from
 
       const body = extractBody(msg.payload)
+      // Gmail's snippet is a plain-text preview always available regardless of MIME structure.
+      // Prepend it so parsers always have key billing fields even if body extraction misses them.
+      const snippet = msg.snippet ? decodeURIComponent(msg.snippet.replace(/&#(\d+);/g, (_, c) => String.fromCharCode(c))) : ''
+      const fullText = snippet ? `${snippet}\n\n${body}` : body
 
-      return { id, subject, senderEmail, from, date, body }
+      return { id, subject, senderEmail, from, date, body: fullText }
     })
   )
 

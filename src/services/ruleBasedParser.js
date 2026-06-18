@@ -9,7 +9,7 @@ const PROVIDER_RULES = [
     domains: ['rogers.com', 'rogershelp.com'],
     subjectPatterns: [/rogers/i],
     amountRegex: /(?:your bill total|amount due|total due|balance due|payment due|total amount|current bill|pay now|owing)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:payment date|due date|payment due|due by|due on|pay by|pay before|on or after)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:payment date|due date|payment due|due by|due on|pay by|pay before|on or after)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Bell',
@@ -17,7 +17,7 @@ const PROVIDER_RULES = [
     domains: ['bell.ca', 'bell.net', 'bellmts.ca'],
     subjectPatterns: [/bell\s+(canada|mobility|internet|tv)/i, /^bell\s/i],
     amountRegex: /(?:amount due|total due|balance due|new charges)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|payment due|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|payment due|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Telus',
@@ -25,7 +25,7 @@ const PROVIDER_RULES = [
     domains: ['telus.com', 'telushealth.com'],
     subjectPatterns: [/telus/i],
     amountRegex: /(?:amount due|total due|balance)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due on|payment due)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due on|payment due)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Freedom Mobile',
@@ -33,7 +33,7 @@ const PROVIDER_RULES = [
     domains: ['freedommobile.ca'],
     subjectPatterns: [/freedom mobile/i],
     amountRegex: /(?:amount due|total due)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Public Mobile',
@@ -41,7 +41,7 @@ const PROVIDER_RULES = [
     domains: ['publicmobile.ca'],
     subjectPatterns: [/public mobile/i],
     amountRegex: /(?:amount|total|charged)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:renewal date|due date|due on)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:renewal date|due date|due on)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Internet ---
@@ -51,7 +51,7 @@ const PROVIDER_RULES = [
     domains: ['teksavvy.com'],
     subjectPatterns: [/teksavvy/i],
     amountRegex: /(?:amount due|total|invoice total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due on)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due on)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Beanfield',
@@ -59,7 +59,7 @@ const PROVIDER_RULES = [
     domains: ['beanfield.com'],
     subjectPatterns: [/beanfield/i],
     amountRegex: /(?:amount due|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due on)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due on)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Utilities ---
@@ -69,7 +69,7 @@ const PROVIDER_RULES = [
     domains: ['enbridge.com', 'enbridgegas.com'],
     subjectPatterns: [/enbridge/i],
     amountRegex: /(?:amount due|total amount due|current charges|total due)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|payment due|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|payment due|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Hydro One',
@@ -77,7 +77,7 @@ const PROVIDER_RULES = [
     domains: ['hydroone.com'],
     subjectPatterns: [/hydro one/i],
     amountRegex: /(?:amount due|total amount|please pay)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|payment due|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|payment due|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Toronto Hydro',
@@ -85,7 +85,7 @@ const PROVIDER_RULES = [
     domains: ['torontohydro.com'],
     subjectPatterns: [/toronto hydro/i],
     amountRegex: /(?:amount due|total due|balance due)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due by|payment due)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due by|payment due)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Alectra',
@@ -93,7 +93,7 @@ const PROVIDER_RULES = [
     domains: ['alectra.com'],
     subjectPatterns: [/alectra/i],
     amountRegex: /(?:amount due|total due)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Streaming ---
@@ -103,7 +103,7 @@ const PROVIDER_RULES = [
     domains: ['netflix.com'],
     subjectPatterns: [/netflix/i],
     amountRegex: /(?:charged|amount|total|billed)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing date|renewal date|next charge)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing date|renewal date|next charge)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Spotify',
@@ -111,7 +111,7 @@ const PROVIDER_RULES = [
     domains: ['spotify.com'],
     subjectPatterns: [/spotify/i],
     amountRegex: /(?:charged|amount|total|payment)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing date|renewal|next payment)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing date|renewal|next payment)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Disney+',
@@ -119,7 +119,7 @@ const PROVIDER_RULES = [
     domains: ['disneyplus.com', 'disney.com'],
     subjectPatterns: [/disney\+/i, /disney plus/i],
     amountRegex: /(?:charged|amount|total|billed)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing|renewal|next charge)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing|renewal|next charge)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Crave',
@@ -127,7 +127,7 @@ const PROVIDER_RULES = [
     domains: ['crave.ca', 'cravetv.ca'],
     subjectPatterns: [/crave/i],
     amountRegex: /(?:charged|amount|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Amazon Prime',
@@ -135,7 +135,7 @@ const PROVIDER_RULES = [
     domains: ['amazon.ca', 'amazon.com'],
     subjectPatterns: [/amazon prime/i, /prime video/i, /prime membership/i],
     amountRegex: /(?:charged|amount|total|billed)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing|renewal|next charge)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing|renewal|next charge)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Apple Music',
@@ -143,7 +143,7 @@ const PROVIDER_RULES = [
     domains: ['apple.com'],
     subjectPatterns: [/apple music/i, /apple one/i],
     amountRegex: /(?:billed|charged|amount|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'YouTube Premium',
@@ -152,7 +152,7 @@ const PROVIDER_RULES = [
     domains: ['youtube.com'],
     subjectPatterns: [/youtube premium/i],
     amountRegex: /(?:charged|amount|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:next billing|renewal)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Local Utilities ---
@@ -162,7 +162,7 @@ const PROVIDER_RULES = [
     domains: ['oakvillehydro.com'],
     subjectPatterns: [/oakville hydro/i, /oakvillehydro/i],
     amountRegex: /(?:total account balance|amount due|balance)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due on|due date|payment due)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due on|due date|payment due)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Home Services ---
@@ -193,7 +193,7 @@ const PROVIDER_RULES = [
     subjectPatterns: [/scotiabank/i, /scotia/i, /e-statement/i],
     // Prefer statement balance; fall back to minimum payment
     amountRegex: /(?:statement balance|new balance|balance)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:payment due date|due date|payment due)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:payment due date|due date|payment due)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 
   // --- Insurance ---
@@ -203,7 +203,7 @@ const PROVIDER_RULES = [
     domains: ['intact.net', 'intact.ca'],
     subjectPatterns: [/intact insurance/i, /\bintact\b/i],
     amountRegex: /(?:premium|amount due|total due|payment)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|payment due|due on)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|payment due|due on)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Aviva',
@@ -211,7 +211,7 @@ const PROVIDER_RULES = [
     domains: ['aviva.ca'],
     subjectPatterns: [/aviva/i],
     amountRegex: /(?:premium|amount due|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Sonnet',
@@ -219,7 +219,7 @@ const PROVIDER_RULES = [
     domains: ['sonnet.ca'],
     subjectPatterns: [/sonnet insurance/i, /\bsonnet\b/i],
     amountRegex: /(?:premium|amount|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due on)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due on)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
   {
     provider: 'Belairdirect',
@@ -227,7 +227,7 @@ const PROVIDER_RULES = [
     domains: ['belairdirect.com'],
     subjectPatterns: [/belairdirect/i],
     amountRegex: /(?:premium|amount due|total)[^\d$]*\$?([\d,]+\.?\d{0,2})/i,
-    dueDateRegex: /(?:due date|due by)[^\d]*(\w+ \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
+    dueDateRegex: /(?:due date|due by)[^\d]*(\w+\.? \d{1,2},?\s*\d{4}|\d{4}-\d{2}-\d{2})/i,
   },
 ]
 
@@ -253,8 +253,8 @@ function parseDateString(raw) {
     }
     return `${year}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`
   }
-  // "June 6, 2026" or "June 6 2026"
-  const named = s.replace(',', '').trim()
+  // "Jun. 15, 2026" or "June 6, 2026" or "June 6 2026" — strip trailing period from month abbrev
+  const named = s.replace(/(\w+)\.\s*(\d)/, '$1 $2').replace(',', '').trim()
   const d = new Date(named)
   if (!isNaN(d)) {
     // Build ISO string from local date parts to avoid UTC offset shift
