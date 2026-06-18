@@ -40,27 +40,19 @@ async function callGeminiAPI(prompt) {
   return JSON.parse(match[0])
 }
 
-/**
- * Parse a single bill email.
- * 1. Try the fast, free rule-based parser (known Canadian providers).
- * 2. Fall back to Gemini for any email format the rules can't handle.
- * 3. If no key is set or the call fails, flag the email for manual review.
- */
-export async function parseBillEmail({ body, subject, senderEmail }) {
-  // Try rule-based parser first — instant and free for known providers.
-  const ruled = parseEmailWithRules({ body, subject, senderEmail })
-  if (ruled) return ruled
-
-  // Fall back to Gemini only when the rules don't recognise the provider.
-  if (!GEMINI_API_KEY) return MANUAL_REVIEW_RESULT
-
-  const prompt = `You are a billing email parser. Extract structured bill data from the email below.
+const PROMPT_HEADER = `You are a billing email parser. Extract structured bill data from the email below.
 Return ONLY a valid JSON object with these exact keys:
-  provider (string), category (one of: Telecom, Internet, Utilities, Streaming, Insurance, Kids, Other),
-  amount (number or null), due_date (YYYY-MM-DD or null), confidence (HIGH, MEDIUM, or LOW).
+  provider (string — the company/biller name, e.g. "Scotiabank", "Rogers"),
+  category (one of: Telecom, Internet, Utilities, Streaming, Insurance, CreditCard, Kids, Other),
+  amount (number or null — the total amount owed/charged; for a credit card statement use the statement balance, not the minimum payment),
+  due_date (YYYY-MM-DD or null — the payment due date),
+  confidence (HIGH, MEDIUM, or LOW).
 Set confidence=LOW if this does not appear to be a billing/payment email.
 Set confidence=HIGH if you found both amount and due_date.
-Set confidence=MEDIUM if you found amount but not due_date.
+Set confidence=MEDIUM if you found amount but not due_date.`
+
+function buildPrompt({ body, subject, senderEmail }) {
+  return `${PROMPT_HEADER}
 
 From: ${senderEmail || ''}
 Subject: ${subject || ''}
@@ -68,12 +60,32 @@ Body:
 ${(body || '').slice(0, 4000)}
 
 Return only the JSON object, no explanation.`
+}
 
-  try {
-    const parsed = await callGeminiAPI(prompt)
-    return { ...parsed, parsed_by: 'gemini', needs_review: parsed.confidence !== 'HIGH' }
-  } catch (e) {
-    console.error('Gemini parse failed:', e.message)
-    return MANUAL_REVIEW_RESULT
+/**
+ * Parse a single bill email.
+ * 1. AI-first: Gemini reads any email format and extracts the fields generically —
+ *    no per-provider rules required, so it scales to any new biller automatically.
+ * 2. If no key is set or the call fails, fall back to the offline rule-based parser
+ *    (known Canadian providers), then to manual review.
+ */
+export async function parseBillEmail({ body, subject, senderEmail }) {
+  // Primary path: let the AI parse it. Works for any provider, any template.
+  if (GEMINI_API_KEY) {
+    try {
+      const parsed = await callGeminiAPI(buildPrompt({ body, subject, senderEmail }))
+      if (parsed && parsed.confidence !== 'LOW' && parsed.amount != null) {
+        return { ...parsed, parsed_by: 'gemini', needs_review: parsed.confidence !== 'HIGH' }
+      }
+      // Low confidence / no amount — try rules as a second opinion before giving up.
+    } catch (e) {
+      console.error('Gemini parse failed, falling back to rules:', e.message)
+    }
   }
+
+  // Fallback path: offline regex rules for known providers (also used when no key set).
+  const ruled = parseEmailWithRules({ body, subject, senderEmail })
+  if (ruled) return ruled
+
+  return MANUAL_REVIEW_RESULT
 }
