@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, Download, RefreshCw, CheckCircle, AlertCircle, Bug } from 'lucide-react'
+import { Plus, Download, RefreshCw, CheckCircle, AlertCircle, Bug, Sparkles } from 'lucide-react'
 import { useBills } from '../context/BillsContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { CATEGORIES } from '../utils/categoryMapper.js'
@@ -104,8 +104,29 @@ export default function Settings() {
   const inputClass = 'border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500'
   const grayBtn = 'flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors'
 
+  const aiEnabled = !!import.meta.env.VITE_GEMINI_API_KEY
+
   return (
     <div className="space-y-6">
+      {/* AI parsing status banner */}
+      {aiEnabled ? (
+        <div className="flex items-start gap-3 bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-900/50 rounded-xl p-4 text-sm">
+          <Sparkles className="w-5 h-5 text-violet-600 dark:text-violet-400 shrink-0 mt-0.5" />
+          <div className="text-violet-800 dark:text-violet-300">
+            <p className="font-medium">AI parsing is on</p>
+            <p>Gemini reads every synced email and extracts bill details automatically — no per-provider rules needed.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-start gap-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl p-4 text-sm">
+          <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div className="text-amber-800 dark:text-amber-300">
+            <p className="font-medium">AI parsing is off</p>
+            <p>Add a free <span className="font-mono">VITE_GEMINI_API_KEY</span> (from aistudio.google.com) to your environment and redeploy. Until then, only known providers are parsed via built-in rules.</p>
+          </div>
+        </div>
+      )}
+
       <div className={cardClass}>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Actions</h2>
         <div className="flex flex-wrap gap-3">
