@@ -16,7 +16,7 @@ const features = [
   {
     icon: <Mail className="w-6 h-6 text-blue-600" />,
     title: 'Reads bill emails automatically',
-    desc: 'Connects to your Gmail Bills label and extracts amounts, due dates, and providers.',
+    desc: 'Connects to your Gmail MyBills label and extracts amounts, due dates, and providers.',
   },
   {
     icon: <AlertTriangle className="w-6 h-6 text-amber-500" />,
@@ -99,7 +99,7 @@ export default function LandingPage() {
         {/* Privacy note */}
         <div className="mt-10 flex items-center gap-2 text-sm text-gray-400 max-w-md">
           <Shield className="w-4 h-4 flex-shrink-0" />
-          <span>We only read emails labelled Bills. We cannot send emails or access anything else in your inbox.</span>
+          <span>We only read emails labelled MyBills. We cannot send emails or access anything else in your inbox.</span>
         </div>
       </main>
     </div>

@@ -36,7 +36,7 @@ npm run dev
 | `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID (for Gmail integration) |
 | `VITE_GOOGLE_API_KEY` | Google API key |
 | `VITE_GOOGLE_SHEET_ID` | Google Sheet ID (for cloud persistence) |
-| `VITE_GMAIL_BILLS_LABEL` | Gmail label to scan for bills (default: Bills) |
+| `VITE_GMAIL_BILLS_LABEL` | Gmail label to scan for bills (default: MyBills) |
 | `VITE_DEFAULT_SPIKE_THRESHOLD` | Default spike detection threshold in % (default: 10) |
 | `VITE_CURRENCY` | Currency code (default: CAD) |
 | `VITE_TIMEZONE` | Timezone (default: America/Toronto) |

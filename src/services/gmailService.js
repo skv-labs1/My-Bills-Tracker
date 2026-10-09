@@ -1,5 +1,8 @@
 const GMAIL_BASE = 'https://gmail.googleapis.com/gmail/v1'
-const VIRKAR_EMAIL = 'virkar.bills@gmail.com'
+// 'me' = the inbox of whoever is logged in.
+const GMAIL_USER = 'me'
+// Only emails with this Gmail label are synced. Label names with spaces must be written with dashes.
+export const BILLS_LABEL = import.meta.env.VITE_GMAIL_BILLS_LABEL || 'MyBills'
 
 function authHeader(token) {
   return { Authorization: `Bearer ${token}` }
@@ -67,31 +70,34 @@ function getHeader(headers, name) {
   return headers?.find(h => h.name.toLowerCase() === name.toLowerCase())?.value || ''
 }
 
-/**
- * Fetch all emails from virkar.bills@gmail.com inbox.
- * token    — OAuth access token from the logged-in skv.labs1 user
- * maxResults — how many messages to fetch (default 100)
- */
-export async function fetchBillEmails(token, { maxResults = 100, since = null } = {}) {
-  const params = {
-    userId: VIRKAR_EMAIL,
-    maxResults,
-  }
+// Build the Gmail search query that limits sync to the bills label.
+export function billsQuery(since = null) {
+  const terms = [`label:${BILLS_LABEL}`]
   if (since) {
     // since is a JS Date — convert to Gmail query format
     const d = new Date(since)
     const y = d.getFullYear()
     const m = String(d.getMonth() + 1).padStart(2, '0')
     const day = String(d.getDate()).padStart(2, '0')
-    params.q = `after:${y}/${m}/${day}`
+    terms.push(`after:${y}/${m}/${day}`)
   }
+  return terms.join(' ')
+}
 
-  const listRes = await gmailGet(`/users/${VIRKAR_EMAIL}/messages`, token, params)
+/**
+ * Fetch bill emails from the logged-in user's inbox, limited to the bills label.
+ * token      — OAuth access token of the logged-in user
+ * maxResults — how many messages to fetch (default 100)
+ */
+export async function fetchBillEmails(token, { maxResults = 100, since = null } = {}) {
+  const params = { maxResults, q: billsQuery(since) }
+
+  const listRes = await gmailGet(`/users/${GMAIL_USER}/messages`, token, params)
   const messages = listRes.messages || []
 
   const emails = await Promise.all(
     messages.map(async ({ id }) => {
-      const msg = await gmailGet(`/users/${VIRKAR_EMAIL}/messages/${id}`, token, { format: 'full' })
+      const msg = await gmailGet(`/users/${GMAIL_USER}/messages/${id}`, token, { format: 'full' })
       const headers = msg.payload?.headers || []
       const subject = getHeader(headers, 'subject')
       const from = getHeader(headers, 'from')

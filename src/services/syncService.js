@@ -5,7 +5,7 @@ import { isPastDue } from '../utils/dateHelpers.js'
 
 /**
  * Full sync:
- * 1. Fetch emails from virkar inbox
+ * 1. Fetch emails with the bills label from the logged-in inbox
  * 2. Parse each with rule-based parser (Claude fallback if key set)
  * 3. Skip emails already saved (dedup by email_id)
  * 4. Append new bills to Google Sheet
@@ -16,7 +16,7 @@ export async function syncEmails(token, { since = null } = {}) {
   const existing = await getAllBills(token)
   const existingEmailIds = new Set(existing.map(b => b.email_id).filter(Boolean))
 
-  // Fetch emails from virkar inbox
+  // Fetch emails with the bills label from the logged-in inbox
   const emails = await fetchBillEmails(token, { since, maxResults: 200 })
 
   const newBills = []

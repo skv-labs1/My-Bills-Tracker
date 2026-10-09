@@ -4,6 +4,7 @@ import { useBills } from '../context/BillsContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { CATEGORIES } from '../utils/categoryMapper.js'
 import HistoricalMatrix from './HistoricalMatrix.jsx'
+import { billsQuery, BILLS_LABEL } from '../services/gmailService.js'
 
 export default function Settings() {
   const { settings, updateSetting, addProvider, addBill, bills, syncing, syncResult, error, syncGmail } = useBills()
@@ -57,13 +58,15 @@ export default function Settings() {
       add(`Sheets API fetch error: ${e.message}`, false)
     }
 
-    // 5. Gmail API — list 1 message from virkar
+    // 5. Gmail API — count messages with the bills label in the logged-in inbox
     try {
-      const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/virkar.bills@gmail.com/messages?maxResults=1`, {
+      const q = encodeURIComponent(billsQuery())
+      const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=50&q=${q}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       const d = await r.json()
-      if (r.ok) add(`Gmail API OK — ${d.resultSizeEstimate ?? 0} messages found`, true)
+      const count = d.messages?.length ?? 0
+      if (r.ok) add(`Gmail API OK — ${count} email(s) with label "${BILLS_LABEL}"${count === 0 ? ' (check the label exists and is applied)' : ''}`, count > 0)
       else add(`Gmail API failed ${r.status}: ${d?.error?.message}`, false)
     } catch (e) {
       add(`Gmail API fetch error: ${e.message}`, false)
